@@ -1,0 +1,79 @@
+<div id="firebase-login">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+    <button onclick="showRegistrationForm()">Register</button>
+    <p id="login-error" style="color: red;"></p>
+</div>
+  
+<div id="registration-form" style="display: none;">
+    <h2>Registration</h2>
+    <input type="email" id="register-email" placeholder="Email"><br>
+    <input type="password" id="register-password" placeholder="Password"><br>
+    <button onclick="register()">Register</button>
+    <p id="registration-error" style="color: red;"></p>
+</div>
+  
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC33nILAHegge8JEV5Q8WKskhV5gWcUjVc",
+        authDomain: "diploma-project-179b1.firebaseapp.com",
+        projectId: "diploma-project-179b1",
+        storageBucket: "diploma-project-179b1.appspot.com",
+        messagingSenderId: "358475217136",
+        appId: "1:358475217136:web:b395b5b7ca49666a4e6a35",
+        measurementId: "G-VJZ1178YSJ"
+    };
+    firebase.initializeApp(firebaseConfig);
+  
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            user.getIdToken(true).then(function(idToken) {
+                localStorage.setItem('userToken', idToken);
+            }).catch(function(error) {
+                console.error("Get ID token error:", error);
+            });
+        } else {
+            localStorage.removeItem('userToken');
+        }
+    });
+
+    function login() {
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+  
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .catch(function (error) {
+                var errorMessage = error.message;
+                console.error("Login error:", errorMessage);
+                document.getElementById('login-error').textContent = errorMessage;
+            });
+  
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+    }
+  
+    function register() {
+        var email = document.getElementById('register-email').value;
+        var password = document.getElementById('register-password').value;
+  
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .catch(function (error) {
+                var errorMessage = error.message;
+                console.error("Registration error:", errorMessage);
+                document.getElementById('registration-error').textContent = errorMessage;
+            });
+    }
+  
+    function showRegistrationForm() {
+        var loginForm = document.getElementById('firebase-login');
+        var registrationForm = document.getElementById('registration-form');
+  
+        loginForm.style.display = "none";
+        registrationForm.style.display = "block";
+    }
+
+</script>
